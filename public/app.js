@@ -11,11 +11,14 @@ const app = {
 
    btns: {
       next: ".btn-next",
+      login: ".btn-login"
    },
 
    forms: {
       login: ".form-login",
    },
+
+   contentParams: [],
 
    init: function() {      
       $.each(app.templates, (key, value) => $(value).hide());
@@ -23,14 +26,29 @@ const app = {
    },
 
    landingPage: function() {
-      $(templates.landing).show();
-      $(forms.locgin).submit(() => {app.content()});
+      $(app.templates.landing).show();
+      $(app.btns.login).click(() => app.content());
    },
 
-   getContent: function(contentKey, getAll = false) {
-      $.get("/content", { key: contentKey, all: getAll })
-      .done(data => console.log(data));
-   }
+   content: function() {
+      $.get("/keys")
+      .done(data => data.forEach(key => app.getContent(key)))
+      .then(() => console.log(app.contentParams));
+
+      $(app.templates.landing).hide();
+      $(app.templates.letter).show();
+      
+      $(app.btns.next).click(() => {app.nextContent()});
+   },
+
+   nextContent: function() {
+
+   },
+
+   getContent: function(contentKey) {
+      $.get("/content", { key: contentKey })
+      .done(data => app.contentParams.push(data));
+   },
 }
 
 $(() => app.init())

@@ -15,17 +15,35 @@ contentParams.ensureIndex({ fieldName: "key", unique: true }, err => console.log
 vidDb.ensureIndex({ fieldName: "key", unique: true }, err => console.log(err));
 
 app.get(
+  "/keys",
+  (req, res) => {
+    contentParams.find(
+      {},
+      (err, data) => {
+        if (err) throw err;
+        
+        const keys = [];
+
+        data.forEach(content => keys.push(content.key));
+
+        res.send(keys);
+    });
+});
+
+app.get(
   "/content",
   (req, res) => {
     contentParams.find(
       req.query, 
-      async (err, data) => {
+      (err, data) => {
         if (err) throw err;
 
         const params = data[0];
 
         const returnData = {
+          type: params.type,
           text: `/assets/text/${params.key}.txt`,
+          font: params.font,
         }
 
         switch(params.type) {
@@ -69,10 +87,8 @@ app.get(
           default:
             break;
         }
-
-    })
-  }
-)
+    });
+});
 
 // const credentials = {
 //    key: fs.readFileSync("cert/privkey1.pem"),
