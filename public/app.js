@@ -6,32 +6,31 @@ const app = {
       VID: "video"
    },
 
-   headerElems: {
-      HEADER: ".header-gallery",
+   elems: {
+      HEADER: {
+         HEADER: ".header-gallery",
+         BTNS: {
+            BACK: ".btn-back",
+            INPUT: ".btn-input",
+            HBDAY: ".btn-hbday"
+         },
+      },
+      TEMPLATES: {
+         LANDING: "#landing",
+         CLOSING: "#closing",
+         GALLERY: "#gallery",
+         LTR: "#letter",
+         LTRIMGS: "#letter-images",
+         VID: "#video",
+      },
       BTNS: {
-         BACK: ".btn-back",
-         INPUT: ".btn-input",
-         HBDAY: ".btn-hbday"
+         NEXT: ".btn-next",
+         LOGIN: ".btn-login",
+         GALLERY: ".btn-gallery",
+      },
+      FORMS: {
+         LOGIN: ".form-login"
       }
-   },
-   
-   templates: {
-      landing: "#landing",
-      letter: "#letter",
-      letterImages: "#letter-images",
-      video: "#video",
-      closing: "#closing",
-      gallery: "#gallery",
-   },
-
-   btns: {
-      NEXT: ".btn-next",
-      LOGIN: ".btn-login",
-      GALLERY: ".btn-gallery",
-   },
-
-   forms: {
-      login: ".form-login",
    },
 
    contentKeys: [],
@@ -40,14 +39,14 @@ const app = {
 
    init: function() {  
       app.hideAllTemplates();    
-      $.each([app.btns.NEXT, app.headerElems.HEADER], (index, elem) => $(elem).hide());
+      $.each([app.elems.BTNS.NEXT, app.elems.HEADER.HEADER], (index, elem) => $(elem).hide());
       app.landingPage();
    },
 
    landingPage: async function() {
-      $(app.templates.landing).show();
+      $(app.elems.TEMPLATES.LANDING).show();
 
-      $(app.btns.LOGIN).click(
+      $(app.elems.BTNS.LOGIN).click(
          async () => {
             app.contentKeys = await app.getContentKeys();
             app.enableBtns();
@@ -58,14 +57,14 @@ const app = {
    transitionOpening: function() {
       if (app.openingIndex < app.contentKeys.length) {
          if (app.openingIndex === 0) {            
-            $(app.btns.NEXT).show();
+            $(app.elems.BTNS.NEXT).show();
          }
 
          app.transitionContentTemplate(app.contentKeys[app.openingIndex]);
 
          app.openingIndex += 1;
       } else {
-         $(app.btns.NEXT).hide();
+         $(app.elems.BTNS.NEXT).hide();
          app.closing();
       }
    },
@@ -85,7 +84,7 @@ const app = {
    closing: function() {
       app.hideAllTemplates();
       
-      $(app.templates.closing).show();
+      $(app.elems.TEMPLATES.CLOSING).show();
    },
 
    transitionGallery: function() {
@@ -98,9 +97,9 @@ const app = {
          }
       )
 
-      $(app.templates.gallery).show();
-      $(app.headerElems.HEADER).show();
-      $(app.headerElems.BTNS.BACK).hide();
+      $(app.elems.TEMPLATES.GALLERY).show();
+      $(app.elems.HEADER.HEADER).show();
+      $(app.elems.HEADER.BTNS.BACK).hide();
    },
 
    clearContent: function() {
@@ -117,7 +116,7 @@ const app = {
       .click(() => {
          app.transitionContentTemplate(linkKey);
          
-         $(app.headerElems.BTNS.BACK).show()
+         $(app.elems.HEADER.BTNS.BACK).show()
       });
 
       $("<p></p>").text(caption).appendTo(gallery)
@@ -128,13 +127,13 @@ const app = {
 
       switch(contentType) {
          case app.contentTypes.LTR:
-            $(app.templates.letter).show();
+            $(app.elems.TEMPLATES.LTR).show();
             break;
          case app.contentTypes.LTRIMG:
-            $(app.templates.letterImages).show();
+            $(app.elems.TEMPLATES.LTRIMGS).show();
             break;
          case app.contentTypes.VID:
-            $(app.templates.video).show();
+            $(app.elems.TEMPLATES.VID).show();
             break;
       }
    },
@@ -213,18 +212,18 @@ const app = {
    },
 
    hideAllTemplates: function() {
-      $.each(app.templates, (key, value) => $(value).hide());
+      $.each(app.elems.TEMPLATES, (key, value) => $(value).hide());
    },
 
    enableBtns: function() {
-      $(app.btns.NEXT).click(() => app.transitionOpening());
-      $(app.btns.GALLERY).click(() => app.transitionGallery());
+      $(app.elems.BTNS.NEXT).click(() => app.transitionOpening());
+      $(app.elems.BTNS.GALLERY).click(() => app.transitionGallery());
 
-      $(app.headerElems.BTNS.INPUT).click(() => $(".msg-input").show());
-      $(app.headerElems.BTNS.BACK).click(() => app.transitionGallery());
+      $(app.elems.HEADER.BTNS.INPUT).click(() => $(".msg-input").show());
+      $(app.elems.HEADER.BTNS.BACK).click(() => app.transitionGallery());
 
-      $(app.headerElems.BTNS.HBDAY).click(() => {
-         $(app.headerElems.HEADER).hide();
+      $(app.elems.HEADER.BTNS.HBDAY).click(() => {
+         $(app.elems.HEADER.HEADER).hide();
          app.openingIndex = 0;
          app.clearContent();
          app.transitionOpening();
