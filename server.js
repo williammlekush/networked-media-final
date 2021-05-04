@@ -15,6 +15,18 @@ contentParams.ensureIndex({ fieldName: "key", unique: true }, err => console.log
 vidDb.ensureIndex({ fieldName: "key", unique: true }, err => console.log(err));
 
 app.get(
+  "/gallery",
+  (req, res) => {
+    const key = req.query.key;
+
+    res.send({
+      thumbnailPath: `/assets/images/thumbnails/thumb-${key}.jpeg`,
+      captionPath: `/assets/text/captions/caption-${key}.txt`
+    });
+  }
+)
+
+app.get(
   "/keys",
   (req, res) => {
     contentParams.find(

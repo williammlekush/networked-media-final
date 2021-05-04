@@ -19,6 +19,27 @@
    </head>
    <body>
 
+      
+      <header class="header-gallery">
+         <h2 class="title title-gallery">Sunhi's Digital Keepsakes</h2>
+
+         <nav id="site-nav">
+
+            <button type="button" class="btn-back"><span class="material-icons-round">chevron_left</span>Back</button>
+
+
+            <button type="button" class="btn-input"><span class="material-icons-round">add</span>Add Keepsake</button>
+
+            <p class="msg msg-input">
+               Soon, you'll be able to upload your keepsake letters and videos, 
+               but for now, I can add them for you as they come in.
+            </p>
+
+            <button type=button class="btn-hbday"><span class="material-icons-round">slideshow</span>Birthday</button>
+
+         </nav>
+      </header>
+
       <section id="landing" class="template template-landing">
          
          <h1 id="msg-hbday">Happy Birthday Sunhi!</h1>
@@ -30,7 +51,6 @@
              here it goes. from us, to you.
          </p>
 
-            
          <input type="password" name="password" placeholder="is this really you?">
          
          <button class="btn-login" type="button">Enter</button>
@@ -39,45 +59,27 @@
 
       <section id="letter" class="template template-letter">
 
-         <button type="button" class="btn-back"><span class="material-icons-round">chevron_left</span>Back</button>
-
-         <h2 class="header header-content"></h2>
-
          <div class="content content-letter"></div>
-
-         <button type="button" class="btn-next">Next<span class="material-icons-round">chevron_right</span></button>
-
 
       </section>
 
-      <section id="letter-photos" class="template template-letter-images">
-
-         <button type="button" class="btn-back"><span class="material-icons-round">chevron_left</span>Back</button>
-         
-         <h2 class="header header-content"></h2>
+      <section id="letter-images" class="template template-letter-images">
 
          <div class="content content-letter-images"></div>
-
-         <button type="button" class="btn-next">Next<span class="material-icons-round">chevron_right</span></button>
 
       </section>
 
       <section id="video" class="template template-video">
 
-         <button type="button" class="btn-back"><span class="material-icons-round">chevron_left</span>Back</button>
-         
-         <h2 class="header header-content"></h2>
-
          <div class="content content-video">
          
             <iframe class="video" src="" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>
 
-            <p class="copy copy-video"></p>
          </div>
 
-         <button type="button" class="btn-next">Next<span class="material-icons-round">chevron_right</span></button>
-
       </section>
+
+      <button type="button" class="btn-next">Next<span class="material-icons-round">chevron_right</span></button>
 
       <section id="closing" class="template template-closing">
 
@@ -88,7 +90,7 @@
              wait, hold on, sorry the internet is saying there's something more? yes, oh right...
          </p>
 
-         <button type="button">Gallery<span class="material-icons-round">apps</span></button>
+         <button class="btn-gallery" type="button">Gallery<span class="material-icons-round">apps</span></button>
 
       </section>
 
@@ -98,23 +100,6 @@
             Welcome to the gallery! For you to come back to whenever
              you need a reminder of all the people who you've touched. 
          </h1>
-
-         <header>
-            <h2 class="header header-gallery">Sunhi's Digital Keepsakes</h2>
-
-            <nav>
-
-               <button type="button" class="btn-input"><span class="material-icons-round">add</span>Add Keepsake</button>
-
-               <p class="copy copy-input">
-                  Soon, you'll be able to upload your keepsake letters and videos, 
-                  but for now, I can add them for you as they come in.
-               </p>
-
-               <button type=button class="btn-hbday"><span class="material-icons-round">slideshow</span>Birthday</button>
-
-            </nav>
-         </header>
 
          <div class="content content-gallery"></div>
       </section>
