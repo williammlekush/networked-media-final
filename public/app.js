@@ -23,9 +23,12 @@ const app = {
          LTRIMGS: "#letter-images",
          VID: "#video",
       },
+      LOGIN: {
+         INPUT: ".input-pass",
+         BTN: ".btn-login"
+      },
       BTNS: {
          NEXT: ".btn-next",
-         LOGIN: ".btn-login",
          GALLERY: ".btn-gallery",
       },
       FORMS: {
@@ -40,18 +43,35 @@ const app = {
    init: function() {  
       app.hideAllTemplates();    
       $.each([app.elems.BTNS.NEXT, app.elems.HEADER.HEADER], (index, elem) => $(elem).hide());
+      $(app.elems.LOGIN.BTN).click(
+         async () => {
+            const access = await $.post("/login", {password: $(app.elems.LOGIN.INPUT).val() });
+
+            console.log(access);
+
+            if (access.success) {
+               app.contentKeys = await app.getContentKeys();
+               app.enableBtns();
+
+               if (!access.hbday) {
+                  console.log("happy");
+                  app.transitionOpening();
+               } else {
+                  console.log("gallery");
+                  app.transitionGallery();
+               }
+
+            } else {
+               $(app.elems.LOGIN.INPUT).val("").attr("placeholder", "I guess not :'( ");
+            }
+         });
       app.landingPage();
    },
 
    landingPage: async function() {
       $(app.elems.TEMPLATES.LANDING).show();
 
-      $(app.elems.BTNS.LOGIN).click(
-         async () => {
-            app.contentKeys = await app.getContentKeys();
-            app.enableBtns();
-            app.transitionOpening();
-         });
+    
    },
 
    transitionOpening: function() {
@@ -81,10 +101,12 @@ const app = {
       app.showContentTemplate(contentParams.type);      
    },
 
-   closing: function() {
+   closing: async function() {
       app.hideAllTemplates();
       
       $(app.elems.TEMPLATES.CLOSING).show();
+
+      await $.post("/hbday-done");
    },
 
    transitionGallery: function() {
