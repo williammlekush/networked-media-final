@@ -1,4 +1,15 @@
+
 const app = {
+
+   msgs: {
+      LANDING: {
+         HEADER: "Happy Birthday Sunhi!",
+         COPY: `You gave me the best birthday present I could have asked for this year,
+          and I've been trying to figure out how to one up you ever since. I know, I know,
+         "Not everything is a competition, Will", but you deserve my best, everyday. So
+         here it goes. From us, to you.`
+      }
+   },
 
    contentTypes: {
       LTR: "letter",
@@ -16,7 +27,12 @@ const app = {
          },
       },
       TEMPLATES: {
-         LANDING: "#landing",
+         LANDING: {
+            SECTION: "#landing",
+            HEADER: "#msg-hbday",
+            COPY: ".copy-landing"
+         },
+         LOGIN: "#login",
          CLOSING: "#closing",
          GALLERY: "#gallery",
          LTR: "#letter",
@@ -41,23 +57,17 @@ const app = {
    openingIndex: 0,
 
    init: function() {  
-      // app.hideAllTemplates();    
-      // $.each([app.elems.BTNS.NEXT, app.elems.HEADER.HEADER], (index, elem) => $(elem).hide());
       $(app.elems.LOGIN.BTN).click(
          async () => {
             const access = await $.post("/login", {password: $(app.elems.LOGIN.INPUT).val() });
-
-            console.log(access);
 
             if (access.success) {
                app.contentKeys = await app.getContentKeys();
                app.enableBtns();
 
                if (!access.hbday) {
-                  console.log("happy");
                   app.transitionOpening();
                } else {
-                  console.log("gallery");
                   app.transitionGallery();
                }
 
@@ -68,10 +78,39 @@ const app = {
       app.landingPage();
    },
 
-   landingPage: async function() {
-      $(app.elems.TEMPLATES.LANDING).show();
+   landingPage: function() {
+      $(app.elems.TEMPLATES.LANDING.SECTION).show();
 
-    
+      app.typeWrite(
+         {  txt: app.msgs.LANDING.HEADER, 
+            target: app.elems.TEMPLATES.LANDING.HEADER,
+            speed: 50,
+         });
+      
+      setTimeout(
+         () => {
+            app.typeWrite(
+               {
+                  txt: app.msgs.LANDING.COPY,
+                  target: app.elems.TEMPLATES.LANDING.COPY,
+                  speed: 50,
+               });
+         }, app.msgs.LANDING.HEADER.length * 50 + 1000);   
+   },
+
+   typeWrite: function({ txt, target, speed }) {
+      let i = 0;
+
+      const writing = setInterval(
+         () => {
+            if (i < txt.length) {
+               $(target).append(txt.charAt(i));
+               i ++;
+            } else {
+               clearInterval(writing);
+            }
+         }, speed
+      );
    },
 
    transitionOpening: function() {

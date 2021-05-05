@@ -5,7 +5,6 @@ const session = require("express-session");
 const bodyParser = require('body-parser');
 const urlencodedParser = bodyParser.urlencoded({ extended: true });
 
-
 const path = require("path");
 const bcrypt = require("bcrypt-nodejs");
 
