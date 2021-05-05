@@ -41,8 +41,8 @@ const app = {
    openingIndex: 0,
 
    init: function() {  
-      app.hideAllTemplates();    
-      $.each([app.elems.BTNS.NEXT, app.elems.HEADER.HEADER], (index, elem) => $(elem).hide());
+      // app.hideAllTemplates();    
+      // $.each([app.elems.BTNS.NEXT, app.elems.HEADER.HEADER], (index, elem) => $(elem).hide());
       $(app.elems.LOGIN.BTN).click(
          async () => {
             const access = await $.post("/login", {password: $(app.elems.LOGIN.INPUT).val() });
