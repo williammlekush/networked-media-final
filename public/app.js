@@ -46,11 +46,6 @@ const app = {
             HEADER: "#msg-hbday",
             COPY: ".copy-landing"
          },
-         LOGIN: {
-            SECTION: "#login",
-            INPUT: ".input-pass",
-            BTN: ".btn-login"
-         },
          CLOSING: {
             SECTION: "#closing",
             COPY: ".copy-closing",
@@ -59,9 +54,10 @@ const app = {
             SECTION: "#gallery",
             MSG: "#msg-gallery"
          },
-         LTR: "#letter",
-         LTRIMGS: "#letter-images",
-         VID: "#video",
+         HBDAYCONTENT: {
+            SECTION: "#hbday-content",
+            CONTENT: ".content-hbday"
+         }
       },
       HBDAYBTNS: {
          WRAPPER: "#btn-wrapper-hbday-nav",
@@ -77,31 +73,25 @@ const app = {
 
    openingIndex: 0,
 
-   devSpeed: 50,
+   devSpeed: 10,
 
-   init: function() {  
-      $(app.elems.TEMPLATES.LOGIN.BTN).click(
-         async () => {
-            const access = await $.post("/login", {password: $(app.elems.TEMPLATES.LOGIN.INPUT).val() });
+   init: async function() {  
+      app.enableBtns();
 
-            if (access.success) {
-               app.contentKeys = await app.getContentKeys();
-               app.enableBtns();
+      app.contentKeys = await app.getContentKeys();
+      const skipHbday = await $.get("/hbday-done");
 
-               if (!access.hbday) {
-                  app.transitionOpening();
-               } else {
-                  app.transitionGallery({firstTime: false});
-               }
+      if (skipHbday) {
+         app.transitionGallery({firstTime: false});
+      } else {
+         app.landingPage();
+      }
 
-            } else {
-               $(app.elems.TEMPLATES.LOGIN.INPUT).val("").attr("placeholder", "I guess not :'( ");
-            }
-         });
-      app.landingPage();
    },
 
-   landingPage: function() {
+   landingPage: async function() {
+      app.clearTypedMsgs();
+      $(app.elems.TEMPLATES.GALLERY.MSG).hide(500);
       $(app.elems.TEMPLATES.LANDING.SECTION).fadeIn(500).css("display", "flex");
 
       app.typeWrite(
@@ -109,7 +99,7 @@ const app = {
             target: app.elems.TEMPLATES.LANDING.HEADER,
             speed: app.devSpeed,
          });
-      
+
       setTimeout(
          () => {
             $(app.elems.TEMPLATES.LANDING.HEADER)
@@ -126,8 +116,10 @@ const app = {
                   });
                
                setTimeout(
-                  () => { $(app.elems.TEMPLATES.LOGIN.SECTION).fadeIn(500).css("display", "flex") },
-                  app.msgs.LANDING.COPY.length * app.devSpeed + 2000
+                  () => {
+                     $(app.elems.HBDAYBTNS.WRAPPER).fadeIn(500).css("display", "flex");
+                  },
+                  app.msgs.LANDING.COPY.length * app.devSpeed + 3000
                )
                },
                1000);
@@ -139,9 +131,6 @@ const app = {
 
    transitionOpening: function() {
       if (app.openingIndex < app.contentKeys.length) {
-         if (app.openingIndex === 0) {            
-            $(app.elems.HBDAYBTNS.WRAPPER).css("display", "flex");
-         }
 
          app.transitionContentTemplate(app.contentKeys[app.openingIndex]);
 
@@ -161,7 +150,7 @@ const app = {
 
       app.hideAllTemplates();
 
-      app.showContentTemplate(contentParams.type);      
+      $(app.elems.TEMPLATES.HBDAYCONTENT.SECTION).show(500);      
    },
 
    closing: async function() {
@@ -186,6 +175,7 @@ const app = {
 
    transitionGallery: function({ firstTime = true }) {
       app.hideAllTemplates();
+      app.clearTypedMsgs();
       app.clearContent();
       $(app.elems.HBDAYBTNS.WRAPPER).hide(500);
 
@@ -213,7 +203,14 @@ const app = {
    },
 
    clearContent: function() {
-      $(".content > *").remove()
+      $(".content").empty()
+   },
+
+   clearTypedMsgs: function() {
+      $(app.elems.TEMPLATES.LANDING.HEADER).html("");
+      $(app.elems.TEMPLATES.LANDING.COPY).html("");
+      $(app.elems.TEMPLATES.CLOSING.COPY).html("");
+      $(app.elems.TEMPLATES.GALLERY.MSG).html("");
    },
 
    fillGallery: async function({ linkKey, thumbnailPath, captionPath }) {
@@ -236,54 +233,33 @@ const app = {
          }));
    },
 
-   showContentTemplate: function(showType) {
-      const contentType = showType;
-
-      switch(contentType) {
-         case app.contentTypes.LTR:
-            $(app.elems.TEMPLATES.LTR).show(500);
-            break;
-         case app.contentTypes.LTRIMG:
-            $(app.elems.TEMPLATES.LTRIMGS).show(500);
-            break;
-         case app.contentTypes.VID:
-            $(app.elems.TEMPLATES.VID).show(500);
-            break;
-      }
-   },
-
    fillContentTemplate: async function(fillParams) {
-      const contentType = fillParams.type;
-      const contentWrapper = `.content-${contentType}`;
-      const fill = {
-         contentElem: contentWrapper,
-         templateParams: fillParams
-      }
-
-      switch(contentType) {
+      switch(fillParams.type) {
          case app.contentTypes.LTR:
-            await app.fillLetterTemplate(fill);
+            await app.fillLetterTemplate(fillParams);
             break;
          case app.contentTypes.LTRIMG:
-            await app.fillLetterImagesTemplate(fill);
+            await app.fillLetterImagesTemplate(fillParams);
             break;
          case app.contentTypes.VID:
-            await app.fillVideoTemplate(fill);
+            await app.fillVideoTemplate(fillParams);
             break;
       }
+
+      $(app.elems.TEMPLATES.HBDAYCONTENT.CONTENT).addClass(`content-${fillParams.type}`);
    },
 
-   fillLetterTemplate: async function({ contentElem, templateParams }) {
-      await app.fillLetterText({ textElem: contentElem, textPath: templateParams.text, font: templateParams.font });
+   fillLetterTemplate: async function(templateParams) {
+      await app.fillLetterText({ textPath: templateParams.text, font: templateParams.font });
       $(".ltr-wrapper").css("width", "100%");
    },
 
-   fillLetterImagesTemplate: async function({ contentElem, templateParams }) {
-      await app.fillLetterText({ textElem: contentElem, textPath: templateParams.text, font: templateParams.font });
+   fillLetterImagesTemplate: async function(templateParams) {
+      await app.fillLetterText({ textPath: templateParams.text, font: templateParams.font });
 
       $("<div>")
       .addClass("ltr-img-wrapper margin-left-32")
-      .appendTo(contentElem)
+      .appendTo(app.elems.TEMPLATES.HBDAYCONTENT.CONTENT)
 
       templateParams.imgs.forEach(
          imgPath => {
@@ -294,7 +270,7 @@ const app = {
          });
    },
 
-   fillVideoTemplate: async function({ contentElem, templateParams }) {
+   fillVideoTemplate: async function(templateParams) {
       const title = await app.getText(templateParams.text);
 
       console.log(title);
@@ -302,7 +278,7 @@ const app = {
       $("<h2>")
       .html(title)
       .addClass("point-48")
-      .appendTo(contentElem);
+      .appendTo(app.elems.TEMPLATES.HBDAYCONTENT.CONTENT);
 
       $("<iframe>")
       .attr(
@@ -314,10 +290,10 @@ const app = {
             allowfullscreen: "",
          })
       .addClass("margin-up-32")
-      .appendTo(contentElem);
+      .appendTo(app.elems.TEMPLATES.HBDAYCONTENT.CONTENT);
    },
 
-   fillLetterText: async function({ textElem, textPath, font} ) {
+   fillLetterText: async function({ textPath, font} ) {
       const text = (await app.getText(textPath)).replace(/\r\n/g, "<br />");
 
       const textSplit = text.split("<br /><br />");
@@ -329,7 +305,7 @@ const app = {
 
       $("<div>")
       .addClass("ltr-wrapper")
-      .appendTo(textElem)
+      .appendTo(app.elems.TEMPLATES.HBDAYCONTENT.CONTENT)
 
       const ltrWrap = ".ltr-wrapper";
 
@@ -394,7 +370,7 @@ const app = {
          $(app.elems.HBDAYBTNS.NEXT).css("display", "flex");
          app.openingIndex = 0;
          app.clearContent();
-         app.transitionOpening();
+         app.landingPage();
       });
    },
    

@@ -1,4 +1,4 @@
-// const https = require("https");
+const https = require("https");
 
 const express = require('express');
 const session = require("express-session");
@@ -15,13 +15,12 @@ const nedb = require("nedb");
 const app = express();
 
 app.use(express.static('public'));
-app.use("/assets", express.static("assets"));
 app.use(urlencodedParser);
 app.use(
   session(
     {
       secret: "secret",
-      cookie: { maxAge: 365 * 60 * 60 * 1000 },
+      cookie: { maxAge: 60 * 60 * 1000 },
       store: new nedbStore({ filename: "databases/session.db" })
     }));
 
@@ -49,7 +48,14 @@ app.post(
         { "user": "sunhi" },
         (err, doc) => {
           if(err) throw err;
-          res.send({ success: compareHash(req.body.password, doc.pass), hbday: hbdayDone });
+
+          if ( compareHash(req.body.password, doc.pass)) {
+            app.use("/assets", express.static("assets"));
+
+            req.session.username = doc.user
+          }
+          
+          res.redirect("/");
         });
   })
 
@@ -74,6 +80,24 @@ app.post(
 //     res.send("<p>success</p>");
 //   }
 // )
+
+app.get(
+  "/",
+  (req, res) => {
+    if (!req.session.username) {
+      res.render("auth.ejs");
+    } else{
+      res.render("index.ejs");
+    }
+  }
+);
+
+app.get(
+  "/hbday-done",
+  (req, res) => {
+    res.send(hbdayDone);
+    }
+)
 
 app.get(
   "/gallery",
@@ -164,14 +188,14 @@ app.get(
     });
 });
 
-// const credentials = {
-//    key: fs.readFileSync("cert/privkey1.pem"),
-//    cert: fs.readFileSync("cert/cert1.pem")
-// }
+const credentials = {
+   key: fs.readFileSync("cert/privkey1.pem"),
+   cert: fs.readFileSync("cert/cert1.pem")
+}
 
-// const httpsServer = https.createServer(credentials, app);
-// httpsServer.listen(443);
+const httpsServer = https.createServer(credentials, app);
+httpsServer.listen(443);
 
-app.listen(80, function () {
-  console.log('Example app listening on port 80!')
-});
+// app.listen(80, function () {
+//   console.log('Example app listening on port 80!')
+// });

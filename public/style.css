@@ -25,6 +25,17 @@ body > * {
    display: none;
 }
 
+/* MARK: Login */
+
+.form-login {
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   flex-flow: row nowrap;
+   margin-top: 33%;
+   width: 100%;
+}
+
 /* MARK: Header */
 
 .header-gallery {
@@ -158,6 +169,11 @@ button {
    display: none;
 }
 
+.btn-login {
+   border: none;
+   cursor: pointer;
+}
+
 /* MARK: templates */
 
 .template {
@@ -168,7 +184,7 @@ button {
 }
 
 #login {
-   justify-content: flex-end;
+   display: flex;
    align-items: center;
 }
 
@@ -182,7 +198,7 @@ button {
    margin-top: 25%;
 }
 
-#video {
+.content-video {
    margin-top: 16%;
 }
 
