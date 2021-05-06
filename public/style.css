@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap');
+
 * {
    box-sizing: border-box;
    background: none;
@@ -8,8 +10,244 @@
    text-decoration: none;
    font-size: 14px;
    font-weight: 400;
+   line-height: 1.5em;
+}
+
+body {
+   min-width: 400px;
+   max-width: 50%;
+   margin: 16px 25%;
+   height: 100%;
 }
 
 body > * {
    display: none;
+}
+
+/* MARK: Header */
+
+.header-gallery {
+   display: none;
+   flex-flow: row wrap;
+   justify-content: space-between;
+   align-items: center;
+}
+
+#site-nav {
+   display: flex;
+   flex-flow: row wrap;
+   justify-content: flex-end;
+   align-items: center;
+   flex-grow: 1;
+}
+
+.msg-input {
+   display: none;
+   width: 100%;
+}
+
+.title-gallery {
+   cursor: pointer;
+   transition: 0.3s;
+}
+
+.title-gallery:hover {
+   color: #F6BD60;
+}
+
+/* MARK: Media Fames */
+
+.video {
+   width: 928px;
+   height: 507px;
+}
+
+.ltr-img,
+.thumbnail,
+.thumbnail-caption {
+   background-position: center;
+   background-repeat: no-repeat;
+   background-size: cover;
+   border-radius: 8px;
+}
+
+.ltr-img {
+   width: 688px;
+   height: 387px;
+}
+
+.thumbnail {
+   width: 208px;
+   height: 208px;
+   margin: 16px;
+}
+
+.thumbnail-caption {
+   width: 100%;
+   height: 100%;
+   display: flex;
+   flex-flow: row wrap;
+   justify-content: flex-start;
+   align-items: flex-end;
+   background: #F6BD60;
+   padding: 1em;
+   opacity: 0;
+   cursor: pointer;
+   transition: 0.3s;
+}
+
+.thumbnail-caption:hover {
+   opacity: 0.8;
+}
+
+/* MARK: Buttons and Inputs */
+
+button, input {
+   font-size: 18px;
+   padding: 0.5em 1em;
+   transition: 0.3s;
+   font-weight: 700;
+}
+
+input {
+   border: 1px black solid;
+   border-radius: 1em;
+}
+
+button {
+   border-radius: 4px;
+   cursor: pointer;
+   display: flex;
+   flex-flow: row nowrap;
+   justify-content: center;
+   align-items: center;
+}
+
+.btn-wrapper {
+   display: none;
+   flex-flow: row wrap;
+   justify-content: flex-start;
+   align-items: center;
+   width: 100%;
+}
+
+#btn-wrapper-hbday-nav {
+   justify-content: flex-end;
+}
+
+.btn-green {
+   background: #84A59D;
+   color:white;
+}
+
+.btn-green:hover {
+   background: #3F554F;
+}
+
+.btn-pink {
+   background: #F5CAC3;
+   color: white;
+}
+
+.btn-pink:hover {
+   background: #E57564;
+}
+
+.btn-gallery {
+   display: none;
+}
+
+/* MARK: templates */
+
+.template {
+   flex-flow: row wrap;
+   justify-content: flex-start;
+   align-items: flex-start;
+   width: 100%;
+}
+
+#login {
+   justify-content: flex-end;
+   align-items: center;
+}
+
+#msg-hbday {
+   width: 100%;
+   margin-top: 33%;
+   transition: 1s;
+}
+
+.copy-closing {
+   margin-top: 25%;
+}
+
+#video {
+   margin-top: 16%;
+}
+
+.content-letter-images {
+   display: flex;
+   flex-flow: row wrap;
+   justify-content: flex-start;
+   align-items: center;
+}
+
+.ltr-img-wrapper {
+   width: calc(70% - 32px);
+}
+
+.ltr-wrapper {
+   width: 30%;
+}
+
+.content-gallery {
+   display: flex;
+   flex-flow: row wrap;
+   justify-content: center;
+   align-items: center;
+}
+
+#msg-gallery {
+   display: none;
+}
+
+/* MARK: basic styles */
+.point-64 {
+   font-size: 64px;
+}
+
+.point-48 {
+   font-size: 48px;
+}
+
+.point-36 {
+   font-size: 36px;
+}
+
+.point-28 {
+   font-size: 28px;
+}
+
+.point-18 {
+   font-size: 18px;
+}
+
+.margin-up-48 {
+   margin-top: 48px;
+}
+
+.margin-up-32 {
+   margin-top: 32px;
+}
+
+.margin-left-32 {
+   margin-left: 32px;
+}
+
+.margin-left-12 {
+   margin-left: 12px;
+}
+
+.margin-right-12 {
+   margin-right: 12px;
 }

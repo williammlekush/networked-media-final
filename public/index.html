@@ -20,39 +20,35 @@
    <body>
       
       <header class="header-gallery">
-         <h2 class="title title-gallery arvo">Sunhi's Digital Keepsakes</h2>
+         <h2 class="title title-gallery point-36">Sunhi's Digital Keepsakes</h2>
 
          <nav id="site-nav">
+            <button type="button" class="btn-input btn-green"><span class="material-icons-round margin-right-12">add</span>Add Keepsake</button>
 
-            <button type="button" class="btn-back"><span class="material-icons-round">chevron_left</span>Back</button>
-
-
-            <button type="button" class="btn-input"><span class="material-icons-round">add</span>Add Keepsake</button>
-
-            <p class="msg msg-input">
-               Soon, you'll be able to upload your keepsake letters and videos, 
-               but for now, I can add them for you as they come in.
-            </p>
-
-            <button type=button class="btn-hbday"><span class="material-icons-round">slideshow</span>Birthday</button>
-
+            <button type=button class="btn-hbday btn-pink margin-left-32"><span class="material-icons-round margin-right-12">slideshow</span>Birthday</button>
          </nav>
+
+         <p class="msg msg-input point-18 margin-up-32">
+            Soon, you'll be able to upload your keepsake letters and videos, 
+            but for now, I can add them for you as they come in.
+         </p>
       </header>
 
       <section id="landing" class="template template-landing">
          
-         <h1 id="msg-hbday"></h1>
+         <h1 id="msg-hbday" class="point-64 center-screen-top"></h1>
          
-         <p class="copy copy-landing"></p>
+         <p class="copy copy-landing point-36 margin-up-48"></p>
 
       </section>
 
-      <section id="login" class="template template-login">
+      <section id="login" class="template template-login margin-up-48">
+         
          <input class="input-pass" type="password" name="password" placeholder="Is it really you?">
          
-         <button class="btn-login" type="button">Enter</button>
-      </section>         
+         <button class="btn-login btn-green margin-left-32" type="button">enter</button>
       
+      </section>         
 
       <section id="letter" class="template template-letter">
 
@@ -68,37 +64,29 @@
 
       <section id="video" class="template template-video">
 
-         <div class="content content-video">
-         
-            <iframe class="video" src="" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>
-
-         </div>
+         <div class="content content-video"></div>
 
       </section>
-
-      <button type="button" class="btn-next">Next<span class="material-icons-round">chevron_right</span></button>
 
       <section id="closing" class="template template-closing">
 
-         <p class="copy copy-closing">
-            Sunhi, i hope you feel half as loved as you've made me feel over the last year. no
-             one needs to tell you how insane this year has been, and i'm amazed at how you still
-             managed to live so much joy. now, we've reached the end of people being sappy... oh,
-             wait, hold on, sorry the internet is saying there's something more? yes, oh right...
-         </p>
-
-         <button class="btn-gallery" type="button">Gallery<span class="material-icons-round">apps</span></button>
+         <p class="copy copy-closing point-36"></p>
 
       </section>
 
+      <div id="btn-wrapper-hbday-nav" class="btn-wrapper margin-up-48">
+
+         <button class="btn-gallery btn-pink" type="button">gallery<span class="material-icons-round margin-left-12">apps</span></button>
+         
+         <button type="button" class="btn-next btn-green">next<span class="material-icons-round margin-left-12">chevron_right</span></button>
+      
+      </div>
+
       <section id="gallery" class="template template-gallery">
 
-         <h1 id="msg-gallery">
-            Welcome to the gallery! For you to come back to whenever
-             you need a reminder of all the people who you've touched. 
-         </h1>
+         <h1 id="msg-gallery" class="point-36 margin-up-32"></h1>
 
-         <div class="content content-gallery"></div>
+         <div class="content content-gallery margin-up-48"></div>
       </section>
    </body>
 </html>

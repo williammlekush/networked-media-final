@@ -4,10 +4,23 @@ const app = {
    msgs: {
       LANDING: {
          HEADER: "Happy Birthday Sunhi!",
-         COPY: `You gave me the best birthday present I could have asked for this year,
-          and I've been trying to figure out how to one up you ever since. I know, I know,
-         "Not everything is a competition, Will", but you deserve my best, everyday. So
-         here it goes. From us, to you.`
+         COPY: `This is my best attempt at one-upping your perfect birthday gift for me this year.
+         I know,
+          I know,
+          "Not everything is a competition, Will", but you deserve my best, 
+          everyday.
+          So here's a little gift from us,
+           to you. <3`
+      },
+      CLOSING: {
+         COPY: `I hope you feel half as loved as you've made me feel over the last year.
+         You've brought so much joy into my life and the lives of everyone around you,
+         so thank you, from all of us. Now, we've reached the end of people being sappy... oh,
+         wait, hold on. Sorry, the internet is saying there's something more? Yes, oh right...`
+      },
+      GALLERY: {
+         FIRST: `Welcome to the gallery! For you to come back to whenever
+         you need a reminder of all the people who care about you.`
       }
    },
 
@@ -21,10 +34,11 @@ const app = {
       HEADER: {
          HEADER: ".header-gallery",
          BTNS: {
-            BACK: ".btn-back",
             INPUT: ".btn-input",
             HBDAY: ".btn-hbday"
          },
+         TITLE: ".title-gallery",
+         INMSG: ".msg-input",
       },
       TEMPLATES: {
          LANDING: {
@@ -32,19 +46,26 @@ const app = {
             HEADER: "#msg-hbday",
             COPY: ".copy-landing"
          },
-         LOGIN: "#login",
-         CLOSING: "#closing",
-         GALLERY: "#gallery",
+         LOGIN: {
+            SECTION: "#login",
+            INPUT: ".input-pass",
+            BTN: ".btn-login"
+         },
+         CLOSING: {
+            SECTION: "#closing",
+            COPY: ".copy-closing",
+         },
+         GALLERY: {
+            SECTION: "#gallery",
+            MSG: "#msg-gallery"
+         },
          LTR: "#letter",
          LTRIMGS: "#letter-images",
          VID: "#video",
       },
-      LOGIN: {
-         INPUT: ".input-pass",
-         BTN: ".btn-login"
-      },
-      BTNS: {
-         NEXT: ".btn-next",
+      HBDAYBTNS: {
+         WRAPPER: "#btn-wrapper-hbday-nav",
+         NEXT:".btn-next",
          GALLERY: ".btn-gallery",
       },
       FORMS: {
@@ -56,10 +77,12 @@ const app = {
 
    openingIndex: 0,
 
+   devSpeed: 50,
+
    init: function() {  
-      $(app.elems.LOGIN.BTN).click(
+      $(app.elems.TEMPLATES.LOGIN.BTN).click(
          async () => {
-            const access = await $.post("/login", {password: $(app.elems.LOGIN.INPUT).val() });
+            const access = await $.post("/login", {password: $(app.elems.TEMPLATES.LOGIN.INPUT).val() });
 
             if (access.success) {
                app.contentKeys = await app.getContentKeys();
@@ -68,62 +91,63 @@ const app = {
                if (!access.hbday) {
                   app.transitionOpening();
                } else {
-                  app.transitionGallery();
+                  app.transitionGallery({firstTime: false});
                }
 
             } else {
-               $(app.elems.LOGIN.INPUT).val("").attr("placeholder", "I guess not :'( ");
+               $(app.elems.TEMPLATES.LOGIN.INPUT).val("").attr("placeholder", "I guess not :'( ");
             }
          });
       app.landingPage();
    },
 
    landingPage: function() {
-      $(app.elems.TEMPLATES.LANDING.SECTION).show();
+      $(app.elems.TEMPLATES.LANDING.SECTION).fadeIn(500).css("display", "flex");
 
       app.typeWrite(
          {  txt: app.msgs.LANDING.HEADER, 
             target: app.elems.TEMPLATES.LANDING.HEADER,
-            speed: 50,
+            speed: app.devSpeed,
          });
       
       setTimeout(
          () => {
-            app.typeWrite(
-               {
-                  txt: app.msgs.LANDING.COPY,
-                  target: app.elems.TEMPLATES.LANDING.COPY,
-                  speed: 50,
-               });
-         }, app.msgs.LANDING.HEADER.length * 50 + 1000);   
-   },
+            $(app.elems.TEMPLATES.LANDING.HEADER)
+            .removeClass("point-64")
+            .addClass("point-48")
+            .css("margin-top", "16%")
 
-   typeWrite: function({ txt, target, speed }) {
-      let i = 0;
-
-      const writing = setInterval(
-         () => {
-            if (i < txt.length) {
-               $(target).append(txt.charAt(i));
-               i ++;
-            } else {
-               clearInterval(writing);
-            }
-         }, speed
-      );
+            setTimeout(
+               () => {
+               app.typeWrite(
+                  {  txt: app.msgs.LANDING.COPY,
+                     target: app.elems.TEMPLATES.LANDING.COPY,
+                     speed: app.devSpeed,
+                  });
+               
+               setTimeout(
+                  () => { $(app.elems.TEMPLATES.LOGIN.SECTION).fadeIn(500).css("display", "flex") },
+                  app.msgs.LANDING.COPY.length * app.devSpeed + 2000
+               )
+               },
+               1000);
+         },
+         app.msgs.LANDING.HEADER.length * app.devSpeed + 300
+         );  
+      
    },
 
    transitionOpening: function() {
       if (app.openingIndex < app.contentKeys.length) {
          if (app.openingIndex === 0) {            
-            $(app.elems.BTNS.NEXT).show();
+            $(app.elems.HBDAYBTNS.WRAPPER).css("display", "flex");
          }
 
          app.transitionContentTemplate(app.contentKeys[app.openingIndex]);
 
          app.openingIndex += 1;
       } else {
-         $(app.elems.BTNS.NEXT).hide();
+         $(app.elems.HBDAYBTNS.NEXT).hide(500);
          app.closing();
       }
    },
@@ -142,25 +166,50 @@ const app = {
 
    closing: async function() {
       app.hideAllTemplates();
+
+      $(app.elems.TEMPLATES.CLOSING.SECTION).show(500, 
+         () => {
+            app.typeWrite(
+               {  txt: app.msgs.CLOSING.COPY,
+                  target: app.elems.TEMPLATES.CLOSING.COPY,
+                  speed: app.devSpeed
+               });
       
-      $(app.elems.TEMPLATES.CLOSING).show();
+            setTimeout(
+               () => $(app.elems.HBDAYBTNS.GALLERY).fadeIn(500).css("display", "flex"),
+               app.msgs.CLOSING.COPY.length * app.devSpeed + 4000
+            )
+      });
 
       await $.post("/hbday-done");
    },
 
-   transitionGallery: function() {
+   transitionGallery: function({ firstTime = true }) {
       app.hideAllTemplates();
       app.clearContent();
+      $(app.elems.HBDAYBTNS.WRAPPER).hide(500);
 
       app.contentKeys.forEach(
          async key => {
             app.fillGallery(Object.assign({ linkKey: key }, await this.getGalleryParams(key)));
          }
-      )
+      )   
 
-      $(app.elems.TEMPLATES.GALLERY).show();
-      $(app.elems.HEADER.HEADER).show();
-      $(app.elems.HEADER.BTNS.BACK).hide();
+      $(app.elems.TEMPLATES.GALLERY.SECTION).show(500);
+      $(app.elems.HEADER.HEADER).show(500).css("display", "flex");
+
+      if (firstTime) {
+         $(app.elems.TEMPLATES.GALLERY.MSG).show();
+
+         setTimeout(
+            app.typeWrite(
+               {  txt: app.msgs.GALLERY.FIRST,
+                  target: app.elems.TEMPLATES.GALLERY.MSG,
+                  speed: app.devSpeed,
+               }),
+            1500);
+
+      }
    },
 
    clearContent: function() {
@@ -170,17 +219,21 @@ const app = {
    fillGallery: async function({ linkKey, thumbnailPath, captionPath }) {
       const caption = await app.getText(captionPath);
       const gallery = ".content-gallery";
-      
-      $("<img>")
-      .attr({ src: thumbnailPath, alt: "" })
-      .appendTo(gallery)
-      .click(() => {
-         app.transitionContentTemplate(linkKey);
-         
-         $(app.elems.HEADER.BTNS.BACK).show()
-      });
 
-      $("<p></p>").text(caption).appendTo(gallery)
+
+      $("<div>")
+      .css("background-image", `url(${thumbnailPath})`)
+      .addClass("thumbnail")
+      .appendTo(gallery)
+      .append(
+         $("<p>")
+         .text(caption)
+         .addClass("thumbnail-caption point-18")
+         .click(() => {
+            app.transitionContentTemplate(linkKey);
+            
+            $(app.elems.HEADER.BTNS.BACK).show()
+         }));
    },
 
    showContentTemplate: function(showType) {
@@ -188,22 +241,22 @@ const app = {
 
       switch(contentType) {
          case app.contentTypes.LTR:
-            $(app.elems.TEMPLATES.LTR).show();
+            $(app.elems.TEMPLATES.LTR).show(500);
             break;
          case app.contentTypes.LTRIMG:
-            $(app.elems.TEMPLATES.LTRIMGS).show();
+            $(app.elems.TEMPLATES.LTRIMGS).show(500);
             break;
          case app.contentTypes.VID:
-            $(app.elems.TEMPLATES.VID).show();
+            $(app.elems.TEMPLATES.VID).show(500);
             break;
       }
    },
 
    fillContentTemplate: async function(fillParams) {
       const contentType = fillParams.type;
-
+      const contentWrapper = `.content-${contentType}`;
       const fill = {
-         contentElem: `.content-${contentType}`,
+         contentElem: contentWrapper,
          templateParams: fillParams
       }
 
@@ -221,39 +274,82 @@ const app = {
    },
 
    fillLetterTemplate: async function({ contentElem, templateParams }) {
-      await app.fillLetterText({ textElem: contentElem, textPath: templateParams.text });
+      await app.fillLetterText({ textElem: contentElem, textPath: templateParams.text, font: templateParams.font });
+      $(".ltr-wrapper").css("width", "100%");
    },
 
    fillLetterImagesTemplate: async function({ contentElem, templateParams }) {
-      await app.fillLetterText({ textElem: contentElem, textPath: templateParams.text });
+      await app.fillLetterText({ textElem: contentElem, textPath: templateParams.text, font: templateParams.font });
+
+      $("<div>")
+      .addClass("ltr-img-wrapper margin-left-32")
+      .appendTo(contentElem)
 
       templateParams.imgs.forEach(
          imgPath => {
-            $( "<img>").attr({
-               src: imgPath,
-               alt: ""
-            }).appendTo(contentElem);
+            $("<div>")
+            .css("background-image", `url(${imgPath})`)
+            .addClass("ltr-img margin-up-32")
+            .appendTo(".ltr-img-wrapper");
          });
    },
 
    fillVideoTemplate: async function({ contentElem, templateParams }) {
-      const caption = await app.getText(templateParams.text);
+      const title = await app.getText(templateParams.text);
 
-      $("<iframe></iframe>").attr({
-         class: "video",
-         src: templateParams.vid,
-         frameborder: "0",
-         allow: "autoplay; fullscreen",
-         allowfullscreen: "",
-      }).appendTo(contentElem);
+      console.log(title);
 
-      $("<p></p>").text(caption).appendTo(contentElem);
+      $("<h2>")
+      .html(title)
+      .addClass("point-48")
+      .appendTo(contentElem);
+
+      $("<iframe>")
+      .attr(
+         {
+            class: "video",
+            src: templateParams.vid,
+            frameborder: "0",
+            allow: "autoplay; fullscreen",
+            allowfullscreen: "",
+         })
+      .addClass("margin-up-32")
+      .appendTo(contentElem);
    },
 
-   fillLetterText: async function({ textElem, textPath} ) {
-      const text = await app.getText(textPath);
-      
-      $("<p></p>").text(text).appendTo(textElem);
+   fillLetterText: async function({ textElem, textPath, font} ) {
+      const text = (await app.getText(textPath)).replace(/\r\n/g, "<br />");
+
+      const textSplit = text.split("<br /><br />");
+
+      let fontFam = font;
+      if (font == "") {
+         fontFam = "Arvo"
+      }
+
+      $("<div>")
+      .addClass("ltr-wrapper")
+      .appendTo(textElem)
+
+      const ltrWrap = ".ltr-wrapper";
+
+      $("<h2>")
+      .html(textSplit[0])
+      .css("font-family", fontFam)
+      .addClass("point-36")
+      .appendTo(ltrWrap);
+
+      $("<p>")
+      .html(textSplit.slice(1, textSplit.length - 1).join("<br /><br />"))
+      .css("font-family", fontFam)
+      .addClass("point-28 margin-up-32")
+      .appendTo(ltrWrap);
+
+      $("<h2>")
+      .html(textSplit[textSplit.length - 1])
+      .css("font-family", fontFam)
+      .addClass("point-36 margin-up-32")
+      .appendTo(ltrWrap);
    },
 
    getText: async function(filePath) {
@@ -273,23 +369,49 @@ const app = {
    },
 
    hideAllTemplates: function() {
-      $.each(app.elems.TEMPLATES, (key, value) => $(value).hide());
+      $.each(
+         app.elems.TEMPLATES,
+         (key, value) => {
+            $(value.SECTION).hide(500);
+            $(value).hide(500);
+         });
    },
 
    enableBtns: function() {
-      $(app.elems.BTNS.NEXT).click(() => app.transitionOpening());
-      $(app.elems.BTNS.GALLERY).click(() => app.transitionGallery());
+      $(app.elems.HBDAYBTNS.NEXT).click(() => app.transitionOpening());
+      $(app.elems.HBDAYBTNS.GALLERY).click(() => app.transitionGallery({}));
 
-      $(app.elems.HEADER.BTNS.INPUT).click(() => $(".msg-input").show());
-      $(app.elems.HEADER.BTNS.BACK).click(() => app.transitionGallery());
+      $(app.elems.HEADER.BTNS.INPUT).click(() => {
+         $(app.elems.HEADER.INMSG).show(500);
+
+         setTimeout(() => $(app.elems.HEADER.INMSG).hide(500), 10000);
+      });
+      $(app.elems.HEADER.TITLE).click(() => app.transitionGallery({firstTime: false }));
 
       $(app.elems.HEADER.BTNS.HBDAY).click(() => {
-         $(app.elems.HEADER.HEADER).hide();
+         $(app.elems.HEADER.HEADER).hide(500);
+         $(app.elems.HBDAYBTNS.GALLERY).hide();
+         $(app.elems.HBDAYBTNS.NEXT).css("display", "flex");
          app.openingIndex = 0;
          app.clearContent();
          app.transitionOpening();
       });
-   }
+   },
+   
+   typeWrite: function({ txt, target, speed }) {
+      let i = 0;
+
+      const writing = setInterval(
+         () => {
+            if (i < txt.length) {
+               $(target).append(txt[i]);
+               i ++;
+            } else {
+               clearInterval(writing);
+            }
+         }, speed
+      );
+   },
 }
 
 $(() => app.init())
