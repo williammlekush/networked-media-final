@@ -188,14 +188,14 @@ app.get(
     });
 });
 
-const credentials = {
-   key: fs.readFileSync("cert/privkey1.pem"),
-   cert: fs.readFileSync("cert/cert1.pem")
-}
+// const credentials = {
+//    key: fs.readFileSync("cert/privkey1.pem"),
+//    cert: fs.readFileSync("cert/cert1.pem")
+// }
 
-const httpsServer = https.createServer(credentials, app);
-httpsServer.listen(443);
+// const httpsServer = https.createServer(credentials, app);
+// httpsServer.listen(443);
 
-// app.listen(80, function () {
-//   console.log('Example app listening on port 80!')
-// });
+app.listen(80, function () {
+  console.log('Example app listening on port 80!')
+});
