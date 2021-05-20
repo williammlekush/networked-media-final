@@ -5,6 +5,7 @@
 
 # assets
 assets/
+databases/
 
 # User-specific files
 *.rsuser
