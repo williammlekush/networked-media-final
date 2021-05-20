@@ -26,8 +26,9 @@ const app = {
 
    contentTypes: {
       LTR: "letter",
-      LTRIMG: "letter-images",
-      VID: "video"
+      LTRHAND: "letter-hand",
+      VID: "video",
+      IMGS: "images",
    },
 
    elems: {
@@ -144,6 +145,8 @@ const app = {
    transitionContentTemplate: async function(contentKey) {
       const contentParams = await app.getContentParams(contentKey);
 
+      console.log("CONTENTPARAMS", contentParams);
+
       app.clearContent();
 
       await app.fillContentTemplate(contentParams);
@@ -234,98 +237,113 @@ const app = {
    },
 
    fillContentTemplate: async function(fillParams) {
-      switch(fillParams.type) {
-         case app.contentTypes.LTR:
-            await app.fillLetterTemplate(fillParams);
-            break;
-         case app.contentTypes.LTRIMG:
-            await app.fillLetterImagesTemplate(fillParams);
-            break;
-         case app.contentTypes.VID:
-            await app.fillVideoTemplate(fillParams);
-            break;
-      }
+      for (type of fillParams.types) {
+         console.log(type);
 
-      $(app.elems.TEMPLATES.HBDAYCONTENT.CONTENT).addClass(`content-${fillParams.type}`);
+         switch(type) {
+            case app.contentTypes.LTR:
+               await app.addLetter(fillParams);
+               break;
+            case app.contentTypes.VID:
+               await app.addVideo(fillParams);
+               break;
+            case app.contentTypes.LTRHAND:
+               await app.addLetterHand(fillParams);
+               break;
+            case app.contentTypes.IMGS:
+               await app.addImages(fillParams);
+               break;
+            default:
+               break;
+         }
+      }
    },
 
-   fillLetterTemplate: async function(templateParams) {
-      await app.fillLetterText({ textPath: templateParams.text, font: templateParams.font });
+   addLetter: async function(templateParams) {
+      const text = (await app.getText(templateParams.text)).replace(/\r\n/g, "<br />");
+
+      const textSplit = text.split("<br /><br />");
+
+      let fontFam = templateParams.font;
+
+      if (fontFam == "") {
+         fontFam = "Arvo"
+      }
+
+      $("<div>")
+         .addClass("ltr-wrapper")
+         .appendTo(app.elems.TEMPLATES.HBDAYCONTENT.CONTENT)
+
+      const ltrWrap = ".ltr-wrapper";
+
+      $("<h2>")
+         .html(textSplit[0])
+         .css("font-family", fontFam)
+         .addClass("point-36")
+         .appendTo(ltrWrap);
+
+      $("<p>")
+         .html(textSplit
+            .slice(1, textSplit.length - 1)
+            .join("<br /><br />"))
+         .css("font-family", fontFam)
+         .addClass("point-28 margin-up-32")
+         .appendTo(ltrWrap);
+
+      $("<h2>")
+         .html(textSplit[textSplit.length - 1])
+         .css("font-family", fontFam)
+         .addClass("point-36 margin-up-32")
+         .appendTo(ltrWrap);
+
       $(".ltr-wrapper").css("width", "100%");
    },
 
-   fillLetterImagesTemplate: async function(templateParams) {
-      await app.fillLetterText({ textPath: templateParams.text, font: templateParams.font });
-
-      $("<div>")
-      .addClass("ltr-img-wrapper margin-left-32")
-      .appendTo(app.elems.TEMPLATES.HBDAYCONTENT.CONTENT)
-
-      templateParams.imgs.forEach(
-         imgPath => {
-            $("<div>")
-            .css("background-image", `url(${imgPath})`)
-            .addClass("ltr-img margin-up-32")
-            .appendTo(".ltr-img-wrapper");
-         });
-   },
-
-   fillVideoTemplate: async function(templateParams) {
+   addVideo: async function(templateParams) {
       const title = await app.getText(templateParams.text);
 
       console.log(title);
 
       $("<h2>")
-      .html(title)
-      .addClass("point-48")
-      .appendTo(app.elems.TEMPLATES.HBDAYCONTENT.CONTENT);
+         .html(title)
+         .addClass("point-48")
+         .appendTo(app.elems.TEMPLATES.HBDAYCONTENT.CONTENT);
 
       $("<iframe>")
-      .attr(
-         {
-            class: "video",
-            src: templateParams.vid,
-            frameborder: "0",
-            allow: "autoplay; fullscreen",
-            allowfullscreen: "",
-         })
-      .addClass("margin-up-32")
-      .appendTo(app.elems.TEMPLATES.HBDAYCONTENT.CONTENT);
+         .attr(
+            {
+               class: "video",
+               src: templateParams.vid,
+               frameborder: "0",
+               allow: "autoplay; fullscreen",
+               allowfullscreen: "",
+            })
+         .addClass("margin-up-32")
+         .appendTo(app.elems.TEMPLATES.HBDAYCONTENT.CONTENT);
    },
 
-   fillLetterText: async function({ textPath, font} ) {
-      const text = (await app.getText(textPath)).replace(/\r\n/g, "<br />");
+   addLetterHand: async function(templateParams) {
+      $("<img>")
+         .attr({
+            "src": templateParams.letter,
+            "alt": "letter from a friend",
+         })
+         .addClass("ltr-hand")
+         .appendTo(app.elems.TEMPLATES.HBDAYCONTENT.CONTENT);         
+   },
 
-      const textSplit = text.split("<br /><br />");
-
-      let fontFam = font;
-      if (font == "") {
-         fontFam = "Arvo"
-      }
-
+   addImages: async function(templateParams) {
       $("<div>")
-      .addClass("ltr-wrapper")
-      .appendTo(app.elems.TEMPLATES.HBDAYCONTENT.CONTENT)
+         .addClass("ltr-img-wrapper")
+         .appendTo(app.elems.TEMPLATES.HBDAYCONTENT.CONTENT)
 
-      const ltrWrap = ".ltr-wrapper";
-
-      $("<h2>")
-      .html(textSplit[0])
-      .css("font-family", fontFam)
-      .addClass("point-36")
-      .appendTo(ltrWrap);
-
-      $("<p>")
-      .html(textSplit.slice(1, textSplit.length - 1).join("<br /><br />"))
-      .css("font-family", fontFam)
-      .addClass("point-28 margin-up-32")
-      .appendTo(ltrWrap);
-
-      $("<h2>")
-      .html(textSplit[textSplit.length - 1])
-      .css("font-family", fontFam)
-      .addClass("point-36 margin-up-32")
-      .appendTo(ltrWrap);
+      templateParams.imgs.forEach(
+         imgPath => {
+            $("<div>")
+               .css("background-image", `url(${imgPath})`)
+               .addClass("ltr-img margin-up-32")
+               .appendTo(".ltr-img-wrapper");
+         });
    },
 
    getText: async function(filePath) {
