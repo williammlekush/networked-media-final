@@ -4,7 +4,7 @@ const app = {
    msgs: {
       LANDING: {
          HEADER: "Happy Birthday Sunhi!",
-         COPY: `This is my best attempt at one-upping your perfect birthday gift for me this year.
+         COPY: `You gave me the perfect birthday present this year, so of course I had to try and one-up you. :) 
          I know,
           I know,
           "Not everything is a competition, Will", but you deserve my best, 
@@ -13,10 +13,27 @@ const app = {
            to you. <3`
       },
       CLOSING: {
-         COPY: `I hope you feel half as loved as you've made me feel over the last year.
-         You've brought so much joy into my life and the lives of everyone around you,
-         so thank you, from all of us. Now, we've reached the end of people being sappy... oh,
-         wait, hold on. Sorry, the internet is saying there's something more? Yes, oh right...`
+         COPY: `Sunhi,
+         It's impossible to tell you how much I love you.
+         You've brought so much joy into my life and the lives of everyone around you...
+         it's astounding.
+          Of course,
+          this hasn't been easy.
+          We've been at each other's throats at times.
+          It's been messy,
+          but it's been ours.
+         And I wouldn't trade any of it for the world.
+          I love you.
+          I love you.
+          I love you,
+          every
+          single
+          day.
+          And with that,
+          we've reached the end of people being sappy... oh,
+          wait,
+          hold on. 
+          Sorry, the internet is saying there's something more? Yes, oh right...`
       },
       GALLERY: {
          FIRST: `Welcome to the gallery! For you to come back to whenever
@@ -74,7 +91,7 @@ const app = {
 
    openingIndex: 0,
 
-   devSpeed: 10,
+   devSpeed: 20,
 
    init: async function() {  
       app.enableBtns();
@@ -145,13 +162,11 @@ const app = {
    transitionContentTemplate: async function(contentKey) {
       const contentParams = await app.getContentParams(contentKey);
 
-      console.log("CONTENTPARAMS", contentParams);
-
       app.clearContent();
 
-      await app.fillContentTemplate(contentParams);
-
       app.hideAllTemplates();
+
+      await app.fillContentTemplate(contentParams);
 
       $(app.elems.TEMPLATES.HBDAYCONTENT.SECTION).show(500);      
    },
@@ -169,7 +184,7 @@ const app = {
       
             setTimeout(
                () => $(app.elems.HBDAYBTNS.GALLERY).fadeIn(500).css("display", "flex"),
-               app.msgs.CLOSING.COPY.length * app.devSpeed + 4000
+               app.msgs.CLOSING.COPY.length * app.devSpeed + 8000
             )
       });
 
@@ -278,7 +293,7 @@ const app = {
 
       $("<h2>")
          .html(textSplit[0])
-         .css("font-family", fontFam)
+         .css("font-family", `${fontFam}, cursive`)
          .addClass("point-36")
          .appendTo(ltrWrap);
 
@@ -286,13 +301,13 @@ const app = {
          .html(textSplit
             .slice(1, textSplit.length - 1)
             .join("<br /><br />"))
-         .css("font-family", fontFam)
+         .css("font-family", `${fontFam}, cursive`)
          .addClass("point-28 margin-up-32")
          .appendTo(ltrWrap);
 
       $("<h2>")
          .html(textSplit[textSplit.length - 1])
-         .css("font-family", fontFam)
+         .css("font-family", `${fontFam}, cursive`)
          .addClass("point-36 margin-up-32")
          .appendTo(ltrWrap);
 
@@ -306,7 +321,7 @@ const app = {
 
       $("<h2>")
          .html(title)
-         .addClass("point-48")
+         .addClass("point-36")
          .appendTo(app.elems.TEMPLATES.HBDAYCONTENT.CONTENT);
 
       $("<iframe>")
@@ -337,13 +352,40 @@ const app = {
          .addClass("ltr-img-wrapper")
          .appendTo(app.elems.TEMPLATES.HBDAYCONTENT.CONTENT)
 
+      $("<div>")
+         .addClass("masonry-sizer")
+         .appendTo(".ltr-img-wrapper")
+
       templateParams.imgs.forEach(
          imgPath => {
-            $("<div>")
-               .css("background-image", `url(${imgPath})`)
-               .addClass("ltr-img margin-up-32")
+            $("<img>")
+               .attr("src", `${imgPath}`)
+               .addClass("ltr-img")
                .appendTo(".ltr-img-wrapper");
          });
+
+      const imgCount = templateParams.imgs.length;
+
+      if (imgCount > 5) {
+         $(".ltr-img").addClass("col-3");
+      } else if (imgCount > 3) {
+         $(".ltr-img").addClass("col-2");
+         $(".masonry-sizer").css("width", "50%");
+      } else {
+         $(".ltr-img").addClass("col-1");
+         $(".masonry-sizer").css("width", "100%");
+      }
+
+      const masonry = $(".ltr-img-wrapper")
+         .masonry({
+            itemSelector: ".ltr-img",
+            columnWidth: ".masonry-sizer",
+            percentPosition: true,
+         })
+
+      masonry
+         .imagesLoaded()
+         .progress(() => masonry.masonry("layout"));
    },
 
    getText: async function(filePath) {

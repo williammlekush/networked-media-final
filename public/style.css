@@ -1,4 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Give+You+Glory&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Over+the+Rainbow&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100&display=swap');
 
 * {
    box-sizing: border-box;
@@ -74,7 +77,10 @@ body > * {
    height: 507px;
 }
 
-.ltr-img,
+.ltr-hand {
+   width: 100%;
+}
+
 .thumbnail,
 .thumbnail-caption {
    background-position: center;
@@ -84,8 +90,23 @@ body > * {
 }
 
 .ltr-img {
-   width: 688px;
-   height: 387px;
+   padding: 8px;
+}
+
+.col-3 {
+   width: 33%;
+}
+
+.col-2 {
+   width: 50%;
+}
+
+.col-1 {
+   width: 100%;
+}
+
+.masonry-sizer {
+   width: 33%;
 }
 
 .thumbnail {
@@ -198,23 +219,16 @@ button {
    margin-top: 25%;
 }
 
-.content-video {
-   margin-top: 16%;
-}
-
-.content-letter-images {
+.content-hbday {
    display: flex;
    flex-flow: row wrap;
-   justify-content: flex-start;
-   align-items: center;
+   justify-content: center;
+   align-items: flex-start;
 }
 
-.ltr-img-wrapper {
-   width: calc(70% - 32px);
-}
-
+.ltr-img-wrapper,
 .ltr-wrapper {
-   width: 30%;
+   width: 100%;
 }
 
 .content-gallery {
@@ -255,6 +269,10 @@ button {
 
 .margin-up-32 {
    margin-top: 32px;
+}
+
+.margin-up-16 {
+   margin-top: 16px;
 }
 
 .margin-left-32 {
