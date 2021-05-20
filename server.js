@@ -1,4 +1,4 @@
-const https = require("https");
+// const https = require("https");
 
 const express = require('express');
 const session = require("express-session");
@@ -15,6 +15,8 @@ const nedb = require("nedb");
 const app = express();
 
 app.use(express.static('public'));
+app.use("/assets", express.static("assets"));
+
 app.use(urlencodedParser);
 app.use(
   session(
@@ -27,9 +29,6 @@ app.use(
 const contentParams = new nedb({ filename: "databases/content-params.db", autoload: true });
 const vidDb = new nedb({ filename: "databases/video-links.db", autoload: true });
 const users = new nedb({ filename: "databases/users.db", autoload: true });
-
-contentParams.ensureIndex({ fieldName: "key", unique: true }, err => console.log(err));
-vidDb.ensureIndex({ fieldName: "key", unique: true }, err => console.log(err));
 
 let hbdayDone = false;
 
@@ -48,6 +47,7 @@ app.post(
         { "user": "sunhi" },
         (err, doc) => {
           if(err) throw err;
+
 
           if ( compareHash(req.body.password, doc.pass)) {
             app.use("/assets", express.static("assets"));
@@ -138,52 +138,50 @@ app.get(
 
         const params = data[0];
 
+
         const returnData = {
-          type: params.type,
-          text: `/assets/text/${params.key}.txt`,
+          types: params.types,
           font: params.font,
         }
 
-        switch(params.type) {
-          
-          case "letter":
-            res.send(returnData);
-            break;
+        if (params.types.includes("letter") || params.types.includes("video")) {
+          returnData.text = `assets/text/${params.key}.txt`;
+        }
 
-          case "letter-images":
-            const imgPath = `assets/images/${params.key}`;
+        if (params.types.includes("video")) {
+          vidDb.find(
+            req.query,
+            (err, data) => {
+              if (err) throw(err);
+              
+              returnData.vid = data[0].link;
+            });
+        }
 
-            fs.readdir(
-              path.resolve(__dirname, imgPath),
-              (err, files) => {
-                if (err) throw err;
+        if (params.types.includes("letter-hand")) {
+          returnData.letter = `assets/images/letters/${params.key}-letter.jpeg`
+        }
 
-                const filePaths = [];
+        if (params.types.includes("images")) {
+          const imgPath = `assets/images/${params.key}`;
 
-                files.forEach(file => {
-                  filePaths.push(`${imgPath}/${file}`);
-                })
+          fs.readdir(
+            path.resolve(__dirname, imgPath),
+            (err, files) => {
+              if (err) throw err;
 
-                returnData.imgs = filePaths;
+              const filePaths = [];
 
-                res.send(returnData);
+              files.forEach(file => {
+                filePaths.push(`${imgPath}/${file}`);
               });
-            break;
 
-          case "video":
-            vidDb.find(
-              req.query,
-              (err, data) => {
-                if (err) throw(err);
-                
-                returnData.vid = data[0].link;
-                
-                res.send(returnData);
-              });
-            break;
+              returnData.imgs = filePaths;
 
-          default:
-            break;
+              res.send(returnData)
+            });
+        } else {
+          res.send(returnData);
         }
     });
 });
