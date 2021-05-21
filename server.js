@@ -15,7 +15,6 @@ const nedb = require("nedb");
 const app = express();
 
 app.use(express.static('public'));
-app.use("/assets", express.static("assets"));
 
 app.use(urlencodedParser);
 app.use(
@@ -32,6 +31,20 @@ const users = new nedb({ filename: "databases/users.db", autoload: true });
 
 let hbdayDone = false;
 
+app.post( "/login" , (req, res) => {
+  users
+    .findOne({ "user": "sunhi" })
+    .exec( (err, doc) => {
+      if(err) throw err;
+
+      if ( compareHash(req.body.password, doc.pass)) {
+        serveAssets();
+        req.session.username = doc.user
+      }
+      res.redirect("/");
+    });
+})
+
 generateHash = function(pass) {
   return bcrypt.hashSync(pass);
 }
@@ -39,26 +52,6 @@ generateHash = function(pass) {
 compareHash = function(pass, hash) {
   return bcrypt.compareSync(pass, hash);
 }
-
-app.post(
-  "/login",
-  (req, res) => {
-      users.findOne(
-        { "user": "sunhi" },
-        (err, doc) => {
-          if(err) throw err;
-
-
-          if ( compareHash(req.body.password, doc.pass)) {
-            app.use("/assets", express.static("assets"));
-
-            req.session.username = doc.user
-          }
-          
-          res.redirect("/");
-        });
-  })
-
 
 app.post(
   "/hbday-done",
@@ -81,16 +74,13 @@ app.post(
 //   }
 // )
 
-app.get(
-  "/",
-  (req, res) => {
-    if (!req.session.username) {
-      res.render("auth.ejs");
-    } else{
-      res.render("index.ejs");
-    }
+app.get( "/" , (req, res) => {
+  if (!req.session.username) {
+    res.render("auth.ejs");
+  } else{
+    serveAssets();
+    res.render("index.ejs");
   }
-);
 
 app.get(
   "/hbday-done",
@@ -102,6 +92,9 @@ app.get(
 app.get(
   "/gallery",
   (req, res) => {
+serveAssets = function() { 
+  app.use("/assets", express.static("assets"));
+}
 
     const key = req.query.key;
 
