@@ -277,12 +277,12 @@ const app = {
       }
    },
 
-   addLetter: async function(templateParams) {
-      const text = (await app.getText(templateParams.text)).replace(/\r\n/g, "<br />");
+   addLetter: async function({ textPath, font }) {
+      const text = (await app.getText(textPath)).replace(/\r\n/g, "<br />");
 
       const textSplit = text.split("<br /><br />");
 
-      let fontFam = templateParams.font;
+      let fontFam = font;
 
       if (fontFam == "") {
          fontFam = "Arvo"
@@ -317,10 +317,8 @@ const app = {
       $(".ltr-wrapper").css("width", "100%");
    },
 
-   addVideo: async function(templateParams) {
-      const title = await app.getText(templateParams.text);
-
-      console.log(title);
+   addVideo: async function({ titlePath, link }) {
+      const title = await app.getText(titlePath);
 
       $("<h2>")
          .html(title)
@@ -331,7 +329,7 @@ const app = {
          .attr(
             {
                class: "video",
-               src: templateParams.vid,
+               src: link,
                frameborder: "0",
                allow: "autoplay; fullscreen",
                allowfullscreen: "",
@@ -340,17 +338,17 @@ const app = {
          .appendTo(app.elems.TEMPLATES.HBDAYCONTENT.CONTENT);
    },
 
-   addLetterHand: async function(templateParams) {
+   addLetterHand: function(letterPath) {
       $("<img>")
          .attr({
-            "src": templateParams.letter,
+            "src": letterPath,
             "alt": "letter from a friend",
          })
          .addClass("ltr-hand")
          .appendTo(app.elems.TEMPLATES.HBDAYCONTENT.CONTENT);         
    },
 
-   addImages: async function(templateParams) {
+   addImages: function(imgPaths) {
       $("<div>")
          .addClass("ltr-img-wrapper")
          .appendTo(app.elems.TEMPLATES.HBDAYCONTENT.CONTENT)
@@ -359,7 +357,7 @@ const app = {
          .addClass("masonry-sizer")
          .appendTo(".ltr-img-wrapper")
 
-      templateParams.imgs.forEach(
+      imgPaths.forEach(
          imgPath => {
             $("<img>")
                .attr("src", `${imgPath}`)
@@ -367,7 +365,7 @@ const app = {
                .appendTo(".ltr-img-wrapper");
          });
 
-      const imgCount = templateParams.imgs.length;
+      const imgCount = imgPaths.length;
 
       if (imgCount > 5) {
          $(".ltr-img").addClass("col-3");
