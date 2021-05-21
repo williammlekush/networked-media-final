@@ -255,6 +255,9 @@ const app = {
       for (type of fillParams.types) {
          console.log(type);
 
+   fillContentTemplate: async function({ key, types }) {
+      console.log(types);
+      for (type of types) {
          switch(type) {
             case app.contentTypes.LTR:
                await app.addLetter(fillParams);
@@ -396,8 +399,24 @@ const app = {
       return await $.get("/keys");
    },
 
-   getContentParams: async function(contentKey) {
-      return await $.get("/content", { key: contentKey });
+   getContentTypes: async function(contributor) {
+      return await $.get("/types", { key: contributor });
+   },
+
+   getTextParams: async function(contributor) {
+      return await $.get("/text-params", { key: contributor });
+   },
+
+   getVideoLink: async function(contributor) {
+      return await $.get("/video-link", { key: contributor });
+   },
+
+   getLetterHandPath: async function(contributor) {
+      return await $.get("/letter-hand-path", { key: contributor });
+   },
+
+   getImagePaths: async function(contributor) {
+      return await $.get("/image-paths", { key: contributor });
    },
 
    getGalleryParams: async function(galleryKey) {
