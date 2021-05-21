@@ -104,7 +104,6 @@ const app = {
       } else {
          app.landingPage();
       }
-
    },
 
    landingPage: async function() {
@@ -164,12 +163,24 @@ const app = {
       
       app.hideAllTemplates();
 
-      app.fillContentTemplate({
+      await app.fillContentTemplate({
          key: contributor,
          types: await app.getContentTypes(contributor)
       });
 
-      $(app.elems.TEMPLATES.HBDAYCONTENT.SECTION).show(500);      
+      
+      const masonry = $(".ltr-img-wrapper")
+      .masonry({
+         itemSelector: ".ltr-img",
+         columnWidth: ".masonry-sizer",
+         percentPosition: true,
+      });
+   
+      masonry
+         .imagesLoaded()
+         .progress(() => masonry.masonry("layout"))
+
+      $(app.elems.TEMPLATES.HBDAYCONTENT.SECTION).show(500);  
    },
 
    closing: async function() {
@@ -331,9 +342,9 @@ const app = {
             $("<img>")
                .attr("src", `${imgPath}`)
                .addClass("ltr-img")
-               .appendTo(".ltr-img-wrapper");
+               .appendTo(".ltr-img-wrapper")
          });
-
+            
       const imgCount = imgPaths.length;
 
       if (imgCount > 5) {
@@ -345,17 +356,6 @@ const app = {
          $(".ltr-img").addClass("col-1");
          $(".masonry-sizer").css("width", "100%");
       }
-
-      const masonry = $(".ltr-img-wrapper")
-         .masonry({
-            itemSelector: ".ltr-img",
-            columnWidth: ".masonry-sizer",
-            percentPosition: true,
-         })
-
-      masonry
-         .imagesLoaded()
-         .progress(() => masonry.masonry("layout"));
    },
 
    
