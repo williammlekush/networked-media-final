@@ -121,63 +121,62 @@ app.get(
     });
 });
 
-app.get(
-  "/content",
-  (req, res) => {
-    contentParams.find(
-      req.query, 
-      (err, data) => {
-        if (err) throw err;
 
-        const params = data[0];
-
-
-        const returnData = {
-          types: params.types,
-          font: params.font,
-        }
-
-        if (params.types.includes("letter") || params.types.includes("video")) {
-          returnData.text = `assets/text/${params.key}.txt`;
-        }
-
-        if (params.types.includes("video")) {
-          vidDb.find(
-            req.query,
-            (err, data) => {
-              if (err) throw(err);
-              
-              returnData.vid = data[0].link;
-            });
-        }
-
-        if (params.types.includes("letter-hand")) {
-          returnData.letter = `assets/images/letters/${params.key}-letter.jpeg`
-        }
-
-        if (params.types.includes("images")) {
-          const imgPath = `assets/images/${params.key}`;
-
-          fs.readdir(
-            path.resolve(__dirname, imgPath),
-            (err, files) => {
-              if (err) throw err;
-
-              const filePaths = [];
-
-              files.forEach(file => {
-                filePaths.push(`${imgPath}/${file}`);
-              });
-
-              returnData.imgs = filePaths;
-
-              res.send(returnData)
-            });
-        } else {
-          res.send(returnData);
-        }
+app.get( "/types", (req, res) => {
+  contentParams
+    .find(req.query)
+    .exec((err, data) => {
+      if (err) throw err;
+      res.send(data[0].types);
     });
-});
+})
+
+app.get( "/text-params" , (req, res) => {
+  contentParams
+    .find(req.query)
+    .exec((err, data) => {
+      if (err) throw err;
+
+      const params = data[0];
+      res.send({ text: `assets/text/${params.key}.txt`, font: params.font });
+    });
+})
+
+app.get( "/video-link" , (req, res) => {
+  vidDb
+    .find(req.query)
+    .exec((err, data) => {
+      if (err) throw err;
+      res.send(data[0].link);
+    });
+})
+
+app.get( "/letter-hand-path" , (req, res) => {
+  contentParams
+    .find(req.query)
+    .exec((err, data) => {
+      if (err) throw err;
+      res.send(`assets/images/letters/${data[0].key}-letter.jpeg`);
+    });
+})
+
+app.get( "/image-paths", (req, res) => {
+  contentParams
+    .find(req.query)
+    .exec((err, data) => {
+      if (err) throw err;
+
+      const imgPath = `assets/images/${data[0].key}`;
+
+      fs.readdir( path.resolve(__dirname, imgPath), (err, files) => {
+          if (err) throw err;
+
+          const filePaths = [];
+          files.forEach(file => filePaths.push(`${imgPath}/${file}`));
+          res.send(filePaths);
+        });
+    })
+})
 
 // const credentials = {
 //    key: fs.readFileSync("cert/privkey1.pem"),
