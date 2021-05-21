@@ -53,11 +53,7 @@ compareHash = function(pass, hash) {
   return bcrypt.compareSync(pass, hash);
 }
 
-app.post(
-  "/hbday-done",
-  (req, res) => {
-    hbdayDone = true;
-  });
+app.post( "/hbday-done", () => hbdayDone = true);
 
 // app.post(
 //   "/register",
@@ -81,46 +77,34 @@ app.get( "/" , (req, res) => {
     serveAssets();
     res.render("index.ejs");
   }
+});
 
-app.get(
-  "/hbday-done",
-  (req, res) => {
-    res.send(hbdayDone);
-    }
-)
 
-app.get(
-  "/gallery",
-  (req, res) => {
 serveAssets = function() { 
   app.use("/assets", express.static("assets"));
 }
 
-    const key = req.query.key;
+app.get( "/hbday-done" , (req, res) => res.send(hbdayDone))
 
-    res.send({
-      thumbnailPath: `/assets/images/thumbnails/thumb-${key}.jpeg`,
-      captionPath: `/assets/text/captions/caption-${key}.txt`
-    });
-  }
-)
+app.get( "/gallery" , (req, res) => {
+  const key = req.query.key;
 
-app.get(
-  "/keys",
-  (req, res) => {
-    contentParams.find(
-      {},
-      (err, data) => {
-        if (err) throw err;
-        
-        const keys = [];
-
-        data.forEach(content => keys.push(content.key));
-
-        res.send(keys);
-    });
+  res.send({
+    thumbnailPath: `/assets/images/thumbnails/thumb-${key}.jpeg`,
+    captionPath: `/assets/text/captions/caption-${key}.txt`
+  });
 });
 
+app.get( "/keys", (req, res) => {
+    contentParams
+      .find({})
+      .exec( (err, data) => {
+        if (err) throw err;
+        const keys = [];
+        data.forEach(content => keys.push(content.key));
+        res.send(keys);
+    });
+})
 
 app.get( "/types", (req, res) => {
   contentParams
