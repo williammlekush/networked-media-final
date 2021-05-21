@@ -159,11 +159,9 @@ const app = {
       }
    },
 
-   transitionContentTemplate: async function(contentKey) {
-      const contentParams = await app.getContentParams(contentKey);
-
+   transitionContentTemplate: async function(contributor) {
       app.clearContent();
-
+      
       app.hideAllTemplates();
 
       app.fillContentTemplate({
@@ -202,7 +200,7 @@ const app = {
 
       app.contentKeys.forEach(
          async key => {
-            app.fillGallery(Object.assign({ linkKey: key }, await this.getGalleryParams(key)));
+            app.addGallery(Object.assign({ linkKey: key }, await this.getGalleryParams(key)));
          }
       )   
 
@@ -219,44 +217,8 @@ const app = {
                   speed: app.devSpeed,
                }),
             1500);
-
       }
    },
-
-   clearContent: function() {
-      $(".content").empty()
-   },
-
-   clearTypedMsgs: function() {
-      $(app.elems.TEMPLATES.LANDING.HEADER).html("");
-      $(app.elems.TEMPLATES.LANDING.COPY).html("");
-      $(app.elems.TEMPLATES.CLOSING.COPY).html("");
-      $(app.elems.TEMPLATES.GALLERY.MSG).html("");
-   },
-
-   fillGallery: async function({ linkKey, thumbnailPath, captionPath }) {
-      const caption = await app.getText(captionPath);
-      const gallery = ".content-gallery";
-
-
-      $("<div>")
-      .css("background-image", `url(${thumbnailPath})`)
-      .addClass("thumbnail")
-      .appendTo(gallery)
-      .append(
-         $("<p>")
-         .text(caption)
-         .addClass("thumbnail-caption point-18")
-         .click(() => {
-            app.transitionContentTemplate(linkKey);
-            
-            $(app.elems.HEADER.BTNS.BACK).show()
-         }));
-   },
-
-   fillContentTemplate: async function(fillParams) {
-      for (type of fillParams.types) {
-         console.log(type);
 
    fillContentTemplate: async function({ key, types }) {
       for (type of types) {
@@ -396,8 +358,24 @@ const app = {
          .progress(() => masonry.masonry("layout"));
    },
 
-   getText: async function(filePath) {
-      return await $.get(filePath, "text");
+   
+   addGallery: async function({ linkKey, thumbnailPath, captionPath }) {
+      const caption = await app.getText(captionPath);
+      const gallery = ".content-gallery";
+
+
+      $("<div>")
+         .css("background-image", `url(${thumbnailPath})`)
+         .addClass("thumbnail")
+         .appendTo(gallery)
+         .append(
+            $("<p>")
+               .text(caption)
+               .addClass("thumbnail-caption point-18")
+               .click(() => {
+                  app.transitionContentTemplate(linkKey);
+                  $(app.elems.HEADER.BTNS.BACK).show();
+               }));
    },
 
    getContentKeys: async function() {
@@ -426,6 +404,21 @@ const app = {
 
    getGalleryParams: async function(galleryKey) {
       return await $.get("/gallery", { key: galleryKey })
+   },
+
+   getText: async function(filePath) {
+      return await $.get(filePath, "text");
+   },
+
+   clearContent: function() {
+      $(".content").empty()
+   },
+
+   clearTypedMsgs: function() {
+      $(app.elems.TEMPLATES.LANDING.HEADER).html("");
+      $(app.elems.TEMPLATES.LANDING.COPY).html("");
+      $(app.elems.TEMPLATES.CLOSING.COPY).html("");
+      $(app.elems.TEMPLATES.GALLERY.MSG).html("");
    },
 
    hideAllTemplates: function() {
