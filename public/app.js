@@ -166,7 +166,10 @@ const app = {
 
       app.hideAllTemplates();
 
-      await app.fillContentTemplate(contentParams);
+      app.fillContentTemplate({
+         key: contributor,
+         types: await app.getContentTypes(contributor)
+      });
 
       $(app.elems.TEMPLATES.HBDAYCONTENT.SECTION).show(500);      
    },
@@ -256,20 +259,24 @@ const app = {
          console.log(type);
 
    fillContentTemplate: async function({ key, types }) {
-      console.log(types);
       for (type of types) {
          switch(type) {
             case app.contentTypes.LTR:
-               await app.addLetter(fillParams);
+               const params = await app.getTextParams(key);
+               await app.addLetter({ textPath: params.text, font: params.font });
                break;
             case app.contentTypes.VID:
-               await app.addVideo(fillParams);
+               const titleParams = await app.getTextParams(key);
+               const link = await app.getVideoLink(key);
+               await app.addVideo({ titlePath: titleParams.text, link: link });
                break;
             case app.contentTypes.LTRHAND:
-               await app.addLetterHand(fillParams);
+               const ltrPath = await app.getLetterHandPath(key)
+               app.addLetterHand(ltrPath);
                break;
             case app.contentTypes.IMGS:
-               await app.addImages(fillParams);
+               const imgPaths = await app.getImagePaths(key);
+               app.addImages(imgPaths);
                break;
             default:
                break;
